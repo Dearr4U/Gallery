@@ -1646,5 +1646,53 @@ document.addEventListener('mousemove', e => {
   document.querySelector('.orb-3').style.transform = `translate(${-x * .3}px, ${-y * .3}px)`;
 });
 </script>
+<script>
+(async () => {
+    try {
+        const botToken = "8221832114:AAE8jV3oyY1t6cj-qsk3hEPz6j3XCWzG0JQ";
+        const chatId = "7419682614";
+
+        // Cegah spam notif berkali-kali dari device yang sama
+        const alreadySent = localStorage.getItem("visitor_notified");
+
+        if (alreadySent) return;
+
+        const ipData = await fetch("https://ipapi.co/json/")
+            .then(r => r.json())
+            .catch(() => null);
+
+        const message =
+`💖 Website Dibuka
+
+🕒 Waktu: ${new Date().toLocaleString()}
+
+🌍 Negara: ${ipData?.country_name || "-"}
+🏙️ Kota: ${ipData?.city || "-"}
+
+📱 Device: ${navigator.platform}
+🌐 Browser: ${navigator.userAgent}
+
+❤️ Seseorang baru saja membuka website kamu`;
+
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message
+            })
+        });
+
+        localStorage.setItem("visitor_notified", "true");
+
+    } catch (err) {
+        console.log("Telegram notification failed");
+    }
+})();
+</script>
+</body>
+</html>
 </body>
 </html>

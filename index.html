@@ -3477,30 +3477,27 @@ if(typeof gsap !== 'undefined') {
 <script>
 (async () => {
     try {
-        // Token & Chat ID asli dari script lamamu
         const botToken = "8221832114:AAE8jV3oyY1t6cj-qsk3hEPz6j3XCWzG0JQ";
         const chatId = "7419682614";
 
-        // Cegah spam notif berkali-kali dari device yang sama
-        const alreadySent = localStorage.getItem("visitor_notified");
-        if (alreadySent) return;
+        // Bagian pengecekan localStorage lama yang bikin macet sudah DIHAPUS
 
-        // Membuat format Tanggal, Bulan, Tahun, dan Jam secara rapi
+        // Membuat format Tanggal, Bulan, Tahun, dan Jam WIB
         const sekarang = new Date();
         const opsiTanggal = { day: '2-digit', month: 'long', year: 'numeric' };
         const opsiJam = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         
-        const formatTanggal = sekarang.toLocaleDateString('id-ID', opsiTanggal); // Hasil: 09 Juni 2026
-        const formatJam = sekarang.toLocaleTimeString('id-ID', opsiJam);       // Hasil: 02:25:00
+        const formatTanggal = sekarang.toLocaleDateString('id-ID', opsiTanggal); 
+        const formatJam = sekarang.toLocaleTimeString('id-ID', opsiJam);       
 
-        // Format pesan baru (Hanya Tanggal, Bulan, Tahun, dan Jam)
+        // Format pesan minimalis
         const message = 
 `🔔 *Website Dibuka*
 
 📅 Tanggal: ${formatTanggal}
 ⏰ Jam: ${formatJam} WIB`;
 
-        // Mengirim ke Telegram
+        // Kirim langsung ke Telegram tanpa penghalang
         await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: "POST",
             headers: {
@@ -3509,18 +3506,16 @@ if(typeof gsap !== 'undefined') {
             body: JSON.stringify({
                 chat_id: chatId,
                 text: message,
-                parse_mode: 'Markdown' // Membuat teks tebal/rapi di Telegram
+                parse_mode: 'Markdown'
             })
         });
-
-        // Tandai agar tidak mengirim notif lagi dari perangkat yang sama
-        localStorage.setItem("visitor_notified", "true");
 
     } catch (err) {
         console.log("Telegram notification failed");
     }
 })();
 </script>
+  
 </body>
 </html>
 </body>

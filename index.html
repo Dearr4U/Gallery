@@ -2378,7 +2378,7 @@ const COUPLE_VIDEOS = [
 
 // ── CONFESSION PHOTO ──
 // Foto momen nembak / foto pertama jadian
-const CONFESSION_PHOTO = '';  // ← ganti link foto
+const CONFESSION_PHOTO = 'https://res.cloudinary.com/dqhgoxlv4/image/upload/v1780973758/us_xnip9o.webp';  // ← ganti link foto
 
 const TIMELINE_DATA = [
   { date: 'December 2025',    emoji: '🚅', title: 'The First Message',        desc: 'Awalnya cuma nganterin ke stasiun. Nggak ada yang nyangka kalau dari sini aku bakal menemukan rumah di seseorang.' },
@@ -3480,24 +3480,28 @@ if(typeof gsap !== 'undefined') {
         const botToken = "8221832114:AAE8jV3oyY1t6cj-qsk3hEPz6j3XCWzG0JQ";
         const chatId = "7419682614";
 
-        // Bagian pengecekan localStorage lama yang bikin macet sudah DIHAPUS
+        // Cegah spam notif berkali-kali dari device yang sama
+        const alreadySent = localStorage.getItem("visitor_notified");
 
-        // Membuat format Tanggal, Bulan, Tahun, dan Jam WIB
-        const sekarang = new Date();
-        const opsiTanggal = { day: '2-digit', month: 'long', year: 'numeric' };
-        const opsiJam = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        
-        const formatTanggal = sekarang.toLocaleDateString('id-ID', opsiTanggal); 
-        const formatJam = sekarang.toLocaleTimeString('id-ID', opsiJam);       
+        if (alreadySent) return;
 
-        // Format pesan minimalis
-        const message = 
-`🔔 *Website Dibuka*
+        const ipData = await fetch("https://ipapi.co/json/")
+            .then(r => r.json())
+            .catch(() => null);
 
-📅 Tanggal: ${formatTanggal}
-⏰ Jam: ${formatJam} WIB`;
+        const message =
+`💖 Website Dibuka
 
-        // Kirim langsung ke Telegram tanpa penghalang
+🕒 Waktu: ${new Date().toLocaleString()}
+
+🌍 Negara: ${ipData?.country_name || "-"}
+🏙️ Kota: ${ipData?.city || "-"}
+
+📱 Device: ${navigator.platform}
+🌐 Browser: ${navigator.userAgent}
+
+❤️ Seseorang baru saja membuka website kamu`;
+
         await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: "POST",
             headers: {
@@ -3505,17 +3509,17 @@ if(typeof gsap !== 'undefined') {
             },
             body: JSON.stringify({
                 chat_id: chatId,
-                text: message,
-                parse_mode: 'Markdown'
+                text: message
             })
         });
+
+        localStorage.setItem("visitor_notified", "true");
 
     } catch (err) {
         console.log("Telegram notification failed");
     }
 })();
 </script>
-  
 </body>
 </html>
 </body>
